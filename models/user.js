@@ -5,6 +5,7 @@ const cartItemSchema = new mongoose.Schema({
   dish: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Dish",
+    required: true,
   },
   quantity: {
     type: Number,
@@ -17,6 +18,7 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    trim: true,
   },
   email: {
     type: String,
@@ -36,6 +38,7 @@ const UserSchema = new mongoose.Schema({
   },
   cart: {
     type: [cartItemSchema],
+    default: [],
   },
 });
 

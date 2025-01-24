@@ -8,6 +8,7 @@ const DishSchema = new mongoose.Schema({
   price: {
     type: Number,
     required: true,
+    min: [0, "Price must be at least 0"],
   },
   inStock: {
     type: Boolean,
@@ -17,6 +18,7 @@ const DishSchema = new mongoose.Schema({
   counter: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Counter",
+    required: true,
   },
 });
 
