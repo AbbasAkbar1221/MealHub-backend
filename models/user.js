@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const validator = require('validator')
+const validator = require("validator");
 
 const cartItemSchema = new mongoose.Schema({
   dish: {
@@ -29,6 +29,10 @@ const UserSchema = new mongoose.Schema({
       validator: validator.isEmail,
       message: "Please provide a valid email address.",
     },
+  },
+  password: {
+    type: String,
+    required: true,
   },
   role: {
     type: String,
