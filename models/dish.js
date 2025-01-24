@@ -20,6 +20,10 @@ const DishSchema = new mongoose.Schema({
     ref: "Counter",
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
 });
 
 const Dish = mongoose.model("Dish", DishSchema);
