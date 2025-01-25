@@ -12,7 +12,8 @@ async function addDish(req, res){
 
 async function getDishes(req, res){
   try {
-    const dishes = await Dish.find().populate('counter');
+    const {counterId} = req.query;
+    const dishes = await Dish.find({counter: counterId}).populate('counter');
     res.json(dishes);
   } catch (error) {
     res.status(500).json({ error: error.message });
