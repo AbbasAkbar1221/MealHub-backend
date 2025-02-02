@@ -1,4 +1,5 @@
 const Dish = require("../models/dish");
+const User = require("../models/user");
 
 async function addDish(req, res){
   try {
@@ -14,15 +15,16 @@ async function getDishes(req, res){
   try {
     const {counterId} = req.query;
     const dishes = await Dish.find({counter: counterId}).populate('counter');
-    res.json(dishes);
+    const validDishes = dishes.filter(dish => dish !== null);
+    res.json(validDishes);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-async function getDishesByCounter(req, res){
+async function getAllDishes(req, res){
   try {
-    const dish = await Dish.find({counter: req.params.counterId});
+    const dish = await Dish.find();
     if (!dish) return res.status(404).json({ error: "Dish not found" });
     res.json(dish);
   } catch (error) {
@@ -51,20 +53,44 @@ async function updateDish(req, res){
 };
 
 
-async function deleteDish(req, res){
+// async function deleteDish(req, res){
+//   try {
+//     const dish = await Dish.findByIdAndDelete(req.params.id);
+//     if (!dish) return res.status(404).json({ error: "Dish not found" });
+//     res.json({ message: "Dish deleted successfully" });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+async function deleteDish(req, res) {
   try {
     const dish = await Dish.findByIdAndDelete(req.params.id);
     if (!dish) return res.status(404).json({ error: "Dish not found" });
-    res.json({ message: "Dish deleted successfully" });
+
+    // Remove the dish from all users' carts
+    await User.updateMany(
+      { "cart.dish": req.params.id },
+      { $pull: { cart: { dish: req.params.id } } }
+    );
+
+    // Update the cart of the user to remove items with null dish references
+    await User.updateMany(
+      { "cart.dish": null },
+      { $pull: { cart: { dish: null } } }
+    );
+
+    res.status(200).json({ message: "Dish and references in carts deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
+
 
 module.exports = {
     addDish, 
     getDishes,
-    getDishesByCounter,
+    getAllDishes,
     getDishById,
     updateDish,
     deleteDish

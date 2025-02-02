@@ -24,6 +24,16 @@ const DishSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    required: true,
+    default: "Veg",
+  },
+  rating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 });
 
 const Dish = mongoose.model("Dish", DishSchema);

@@ -4,7 +4,7 @@ const router = express.Router();
 const {
   addDish,
   getDishes,
-  getDishesByCounter,
+  getAllDishes,
   getDishById,
   updateDish,
   deleteDish,
@@ -14,7 +14,7 @@ router.post("/", addDish);
 
 router.get("/", getDishes);
 
-router.get("/counter/:counterId", getDishesByCounter);
+router.get("/", getAllDishes);
 
 router.get("/:id", getDishById);
 

@@ -12,8 +12,35 @@ async function addUser(req, res){
 
   async function getAllUsers (req, res) {
     try {
-      const users = await User.find().select("-cart");
-      res.json(users);
+      const {role, search, page = 1, limit = 6} = req.query;
+      let filter = {};
+      if (role) {
+        filter = { role };
+      }
+      if (search) {
+        filter = {
+          ...filter,
+          name: { $regex: search, $options: "i" },
+        };
+      }
+
+      const totalUsers = await User.countDocuments(filter);
+
+      const pageNumber = Math.max(1, parseInt(page));
+      const limitNumber = Math.max(1, parseInt(limit));
+      const skip = (pageNumber - 1) * limitNumber;
+
+      const users = await User.find(filter)
+      .select("-cart -password")
+      .skip(skip)
+      .limit(limitNumber);
+      // res.json(users);
+      res.json({
+        users,
+        totalUsers,
+        totalPages: Math.ceil(totalUsers / limitNumber),
+        currentPage: pageNumber,
+      })
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

@@ -12,7 +12,10 @@ async function addCounter(req, res) {
 
 async function getCounters(req, res) {
   try {
-    const counters = await Counter.find().populate("merchants");
+    const counters = await Counter.find() .populate({
+      path: 'merchants',
+      select: 'name',
+    });
     res.json(counters);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -23,7 +26,7 @@ async function getCounterById(req, res) {
   try {
     const counter = await Counter.findById(req.params.id).populate("merchants");
     if (!counter) return res.status(404).json({ error: "Counter not found" });
-    res.json(counter);
+    res.status(200).json(counter);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -35,7 +38,7 @@ async function updateCounter(req, res) {
       new: true,
     });
     if (!counter) return res.status(404).json({ error: "Counter not found" });
-    res.json(counter);
+    res.status(200).json(counter);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
