@@ -9,9 +9,14 @@ const CounterSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
   merchants: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "User",
+    required: true,
     default: [],
   },
 });

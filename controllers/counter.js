@@ -36,6 +36,7 @@ async function updateCounter(req, res) {
   try {
     const counter = await Counter.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
+      runValidators: true,
     });
     if (!counter) return res.status(404).json({ error: "Counter not found" });
     res.status(200).json(counter);
