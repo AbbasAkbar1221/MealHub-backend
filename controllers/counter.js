@@ -2,6 +2,9 @@ const Counter = require("../models/counter");
 
 async function addCounter(req, res) {
   try {
+    if (!req.body.merchants || req.body.merchants.length === 0) {
+      return res.status(400).json({ error: "A counter must have at least one merchant." });
+    }
     const counter = new Counter(req.body);
     await counter.save();
     res.status(201).json(counter);

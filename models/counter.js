@@ -17,6 +17,12 @@ const CounterSchema = new mongoose.Schema({
     type: [mongoose.Schema.Types.ObjectId],
     ref: "User",
     required: true,
+    validate: {
+      validator: function (value) {
+        return value.length > 0;
+      },
+      message: "Counter must have at least one merchant",
+    },
     default: [],
   },
 });
