@@ -44,7 +44,7 @@ async function getDishById(req, res){
 
 async function updateDish(req, res){
   try {
-    const dish = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const dish = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!dish) return res.status(404).json({ error: "Dish not found" });
     res.json(dish);
   } catch (error) {
@@ -52,16 +52,6 @@ async function updateDish(req, res){
   }
 };
 
-
-// async function deleteDish(req, res){
-//   try {
-//     const dish = await Dish.findByIdAndDelete(req.params.id);
-//     if (!dish) return res.status(404).json({ error: "Dish not found" });
-//     res.json({ message: "Dish deleted successfully" });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 
 async function deleteDish(req, res) {
   try {
