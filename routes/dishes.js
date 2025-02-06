@@ -3,18 +3,23 @@ const router = express.Router();
 
 const {
   addDish,
-  getDishes,
+  getDishesOfCounter,
   getAllDishes,
   getDishById,
   updateDish,
   deleteDish,
 } = require("../controllers/dish");
+const { checkRole } = require("../middleware/permissions");
+const { ROLE } = require("../constants");
 
-router.post("/", addDish);
 
-router.get("/", getDishes);
+router.get("/", getDishesOfCounter);
 
 router.get("/", getAllDishes);
+
+router.use(checkRole(ROLE.Merchant));
+
+router.post("/", addDish);
 
 router.get("/:id", getDishById);
 

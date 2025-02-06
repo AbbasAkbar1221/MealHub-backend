@@ -8,40 +8,28 @@ const {
   getCounterById,
   updateCounter,
   deleteCounter,
+  fetchMerchantsOfCounter,
+  fetchCountersOfMerchant,
 } = require("../controllers/counter");
 
-router.post("/", addCounter);
+const { checkRole } = require("../middleware/permissions");
+
+const { ROLE } = require("../constants");
 
 router.get("/", getCounters);
 
 router.get("/:id", getCounterById);
 
-router.patch("/:id", updateCounter);
+router.get('/merchants/:counterId', fetchMerchantsOfCounter);
+
+router.get('/merchant/counter',checkRole(ROLE.Merchant), fetchCountersOfMerchant);
+
+router.patch("/:id", checkRole(ROLE.Admin, ROLE.Merchant) ,updateCounter);
+
+router.use(checkRole(ROLE.Admin));
+
+router.post("/", addCounter);
 
 router.delete("/:id", deleteCounter);
-
-router.get('/merchants/:counterId', async (req, res) => {
-  try {
-    const { counterId } = req.params;
-    const counter = await Counter.findById(counterId)
-      .populate('merchants', '-password -cart'); 
-
-    if (!counter) {
-      return res.status(404).json({
-        success: false,
-        message: 'Counter not found'
-      });
-    }
-
-    res.status(200).json({data: counter.merchants});
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error',
-      error: error.message
-    });
-  }
-});
 
 module.exports = router;
