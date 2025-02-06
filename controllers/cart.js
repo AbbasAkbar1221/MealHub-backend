@@ -10,17 +10,6 @@ async function getCart(req, res){
   }
 };
 
-// async function getCart(req, res) {
-//   try {
-//     const filteredCart = req.user.cart.filter(item => item.dish !== null);
-    
-//     res.json(filteredCart);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// }
-
-
 async function addDishInCart(req, res){
   try {
 
@@ -114,5 +103,5 @@ module.exports = {
     addDishInCart,
     updateCart,
     deleteDishFromCart,
-    clearCart
+    clearCart,
 };

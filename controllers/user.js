@@ -34,7 +34,6 @@ async function addUser(req, res){
       .select("-cart -password")
       .skip(skip)
       .limit(limitNumber);
-      // res.json(users);
       res.json({
         users,
         totalUsers,
@@ -79,10 +78,47 @@ async function addUser(req, res){
     }
   }
 
+  async function fetchMerchants(req, res){
+    try {
+      const merchants = await User.find({ role: "Merchant" })
+        .select("name email _id")
+        .sort({ name: 1 });
+  
+      if (merchants.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No merchants found",
+        });
+      }
+  
+      res.status(200).json(merchants);
+    } catch (error) {
+      console.error("Error fetching merchants:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch merchants",
+        error: error.message,
+      });
+    }
+  }
+
+  async function fetchUserDetails (req, res){
+    try {
+      const user = req.user;
+      res.json(user);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Internal Server Error", error: error.message });
+    }
+  }
+
   module.exports = {
     addUser,
     getAllUsers,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    fetchMerchants,
+    fetchUserDetails
   }

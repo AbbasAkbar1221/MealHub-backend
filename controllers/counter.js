@@ -57,6 +57,40 @@ async function deleteCounter(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
+async function fetchMerchantsOfCounter(req, res){
+  try {
+    const { counterId } = req.params;
+    const counter = await Counter.findById(counterId)
+      .populate('merchants', '-password -cart'); 
+
+    if (!counter) {
+      return res.status(404).json({
+        success: false,
+        message: 'Counter not found'
+      });
+    }
+
+    res.status(200).json({data: counter.merchants});
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+}
+
+async function fetchCountersOfMerchant(req, res){
+  try {
+    const merchantId = req.user._id;
+    const counters = await Counter.find({ merchants: merchantId });
+    res.status(200).json(counters);
+  } catch (error) {
+    console.error('Error fetching counters:', error);
+    res.status(500).json({ error: error.message });
+  }
+}
 
 module.exports = {
   addCounter,
@@ -64,4 +98,6 @@ module.exports = {
   getCounterById,
   updateCounter,
   deleteCounter,
+  fetchMerchantsOfCounter,
+  fetchCountersOfMerchant,
 };

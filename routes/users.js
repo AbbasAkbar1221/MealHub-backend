@@ -3,13 +3,21 @@ const router = express.Router();
 const User = require("../models/user");
 
 const {
-  // addUser,
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
+  fetchMerchants,
+  fetchUserDetails,
 } = require("../controllers/user");
 
+const { checkRole } = require("../middleware/permissions");
+
+const { ROLE } = require("../constants");
+
+router.get('/details', fetchUserDetails);
+
+router.use(checkRole(ROLE.Admin));
 
 router.get("/", getAllUsers);
 
@@ -19,28 +27,6 @@ router.patch("/:id", updateUser);
 
 router.delete("/:id", deleteUser);
 
-router.get("/list/merchants", async (req, res) => {
-  try {
-    const merchants = await User.find({ role: "Merchant" })
-      .select("name email _id")
-      .sort({ name: 1 });
-
-    if (merchants.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No merchants found",
-      });
-    }
-
-    res.status(200).json(merchants);
-  } catch (error) {
-    console.error("Error fetching merchants:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch merchants",
-      error: error.message,
-    });
-  }
-});
+router.get("/list/merchants", checkRole(ROLE.Admin), fetchMerchants);
 
 module.exports = router;

@@ -11,7 +11,7 @@ async function addDish(req, res){
   }
 };
 
-async function getDishes(req, res){
+async function getDishesOfCounter(req, res){
   try {
     const {counterId} = req.query;
     const dishes = await Dish.find({counter: counterId}).populate('counter');
@@ -58,13 +58,11 @@ async function deleteDish(req, res) {
     const dish = await Dish.findByIdAndDelete(req.params.id);
     if (!dish) return res.status(404).json({ error: "Dish not found" });
 
-    // Remove the dish from all users' carts
     await User.updateMany(
       { "cart.dish": req.params.id },
       { $pull: { cart: { dish: req.params.id } } }
     );
 
-    // Update the cart of the user to remove items with null dish references
     await User.updateMany(
       { "cart.dish": null },
       { $pull: { cart: { dish: null } } }
@@ -79,7 +77,7 @@ async function deleteDish(req, res) {
 
 module.exports = {
     addDish, 
-    getDishes,
+    getDishesOfCounter,
     getAllDishes,
     getDishById,
     updateDish,
